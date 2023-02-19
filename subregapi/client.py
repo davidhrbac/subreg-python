@@ -13,10 +13,13 @@ class SubregApi:
     def base_url(self):
         return self._base_url
 
-    def _make_request(self, path, data):
+    def _make_request(self, path, params=None):
         headers = {"Accept": "application/json", "Authorization": f"Bearer {self.api_key}"}
         url = self.base_url + path
-        response = requests.get(url, json=data, headers=headers)
+        response = requests.get(url, headers=headers, params=params)
+        if response.status_code != 200:
+            print(response.json()['error'])
+        # TODO - add exception
         response.raise_for_status()
         return response.json()
 
@@ -24,9 +27,16 @@ class SubregApi:
     def domains_path(self):
         return "domains"
 
-    def get_domains(self, domain=None):
-        data = {"domain": domain} if domain else {}
-        return self._make_request(self.domains_path, data)
+    def check_domain(self, domain=None):
+        if domain:
+            return self._make_request(f"{self.domains_path}/{domain}/check")
+
+    def get_domains(self):
+        return self._make_request(self.domains_path)
+
+    def get_domain(self, domain=None):
+        if domain:
+            return self._make_request(f"{self.domains_path}/{domain}")
 
     @property
     def create_domain_path(self):
@@ -43,13 +53,27 @@ class SubregApi:
         }
         return self._make_request(self.create_domain_path, data)
 
+
+    @property
+    def dns_path(self):
+        return "dns"
+
+    def analyze_dnsrecords(self, domain=None, type=None):
+        params = {"dnstype": type} if type else {}
+        return self._make_request(f"{self.dns_path}/{domain}/analyze", params=params)
+
+    def get_dnsrecords(self, domain=None):
+        return self._make_request(f"{self.dns_path}/{domain}")
+
     @property
     def contacts_path(self):
         return "contacts"
 
-    def get_contacts(self, contact=None, type=None):
-        data = {"contact": contact, "type": type}
-        return self._make_request(self.contacts_path, data)
+    def get_contact(self, id=None):
+        return self._make_request(f"{self.contacts_path}/{id}")
+
+    def get_contacts(self):
+        return self._make_request(self.contacts_path)
 
     @property
     def create_contact_path(self):
