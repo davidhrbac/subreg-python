@@ -1,9 +1,9 @@
 import requests
 
 class SubregApi:
-    def __init__(self, api_key):
+    def __init__(self, api_key, base_url = "https://api.subreg.cz/"):
         self._api_key = api_key
-        self._base_url = "https://api.subreg.cz/"
+        self._base_url = base_url
 
     @property
     def api_key(self):
