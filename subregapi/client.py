@@ -23,6 +23,13 @@ class SubregApi:
         response.raise_for_status()
         return response.json()
 
+    def _post_request(self, path, data):
+        headers = {"Accept": "application/json", "Authorization": f"Bearer {self.api_key}"}
+        url = self.base_url + path
+        response = requests.post(url, json=data, headers=headers)
+        response.raise_for_status()
+        return response.json()
+
     def _put_request(self, path, data):
         headers = {"Accept": "application/json", "Authorization": f"Bearer {self.api_key}"}
         url = self.base_url + path
@@ -36,9 +43,9 @@ class SubregApi:
 
     def get_domains(self):
         """https://api.demoreg.net/#/Domains/get_domains"""
-        return self._get_request(self.domains_path)
+        return self._get_request(self.domains_path)['domains']
 
-    def check_domain(self, for_user = None):
+    def check_domain(self, domain, for_user = None):
         """https://api.demoreg.net/#/Domains/get_domains__domain__check"""
         params = {"for_user": for_user} if for_user else {}
         if domain:
@@ -46,14 +53,17 @@ class SubregApi:
 
     def multicheck_domains(self, domains = None):
         """https://api.demoreg.net/#/Domains/post_domains_multicheck"""
-        return self._post_request(self.domains_path)
+        if len(domains)>0:
+            data = {}
+            data["domains"] = domains
+            return self._post_request(f"{self.domains_path}/multicheck", data)["results"]
 
     def get_domain(self, domain=None):
         """https://api.demoreg.net/#/Domains/get_domains__domain_"""
         if domain:
             return self._get_request(f"{self.domains_path}/{domain}")
 
-    def create_domain(self, domain=None):
+    def register_domain(self, domain=None):
         """https://api.demoreg.net/#/Domains/post_domains__domain_"""
         if domain:
             return self._get_request(f"{self.domains_path}/{domain}")
@@ -93,21 +103,6 @@ class SubregApi:
             return self._get_request(f"{self.domains_path}/{domain}")
 
     @property
-    def create_domain_path(self):
-        return "domain/create"
-
-    def create_domain(self, domain, registrant_id, auth_info=None, period=1, dns=[], private_whois=False):
-        data = {
-            "domain": domain,
-            "registrant_id": registrant_id,
-            "auth_info": auth_info,
-            "period": period,
-            "dns": dns,
-            "private_whois": private_whois,
-        }
-        return self._get_request(self.create_domain_path, data)
-
-    @property
     def dns_path(self):
         return "dns"
 
@@ -126,7 +121,7 @@ class SubregApi:
         return self._get_request(f"{self.contacts_path}/{id}")
 
     def get_contacts(self):
-        return self._get_request(self.contacts_path)
+        return self._get_request(self.contacts_path)['contacts']
 
     def set_contact(self, id=None, data=None):
         return self._put_request(f"{self.contacts_path}/{id}", data)
