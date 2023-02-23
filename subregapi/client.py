@@ -1,4 +1,5 @@
 import requests
+from .models import Contact, ContactItem, ContactList, ContactId, ErrorResponse
 
 class SubregApi:
     def __init__(self, api_key, base_url = "https://api.subreg.cz/"):
@@ -17,25 +18,19 @@ class SubregApi:
         headers = {"Accept": "application/json", "Authorization": f"Bearer {self.api_key}"}
         url = self.base_url + path
         response = requests.get(url, headers=headers, params=params)
-        if response.status_code != 200:
-            print(response.json()['error'])
-        # TODO - add exception
-        response.raise_for_status()
-        return response.json()
+        return response
 
     def _post_request(self, path, data):
         headers = {"Accept": "application/json", "Authorization": f"Bearer {self.api_key}"}
         url = self.base_url + path
-        response = requests.post(url, json=data, headers=headers)
-        response.raise_for_status()
-        return response.json()
+        response = requests.post(url, data=data, headers=headers)
+        return response
 
     def _put_request(self, path, data):
         headers = {"Accept": "application/json", "Authorization": f"Bearer {self.api_key}"}
         url = self.base_url + path
-        response = requests.put(url, json=data, headers=headers)
-        response.raise_for_status()
-        return response.json()
+        response = requests.put(url, data=data, headers=headers)
+        return response
 
     @property
     def domains_path(self):
@@ -118,18 +113,25 @@ class SubregApi:
         return "contacts"
 
     def get_contact(self, id=None):
-        return self._get_request(f"{self.contacts_path}/{id}")
+        r = self._get_request(f"{self.contacts_path}/{id}")
+        if r.status_code == 200:
+            return Contact.from_dict(r.json())
 
     def get_contacts(self):
-        return self._get_request(self.contacts_path)['contacts']
+        r =  self._get_request(self.contacts_path)
+        if r.status_code == 200:
+            return ContactList.from_dict(r.json())
 
-    def set_contact(self, id=None, data=None):
-        return self._put_request(f"{self.contacts_path}/{id}", data)
-
-    @property
-    def create_contact_path(self):
-        return "domain/create-contact"
+    def set_contact(self, id=None, contact=None):
+        r = self._put_request(f"{self.contacts_path}/{id}", contact.to_json())
+        success = r.status_code == 200
+        return success
 
     def create_contact(self, contact):
-        return self._get_request(self.create_contact_path, contact)
+        r = self._post_request(self.contacts_path, contact.to_json())
+        print(r.status_code)
+        if r.status_code == 200:
+            return ContactId.from_dict(r.json())
+        else:
+            return None
 

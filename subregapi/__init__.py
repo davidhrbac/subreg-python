@@ -1,3 +1,4 @@
+from .models import Contact, ContactItem, ContactList
 from .client import SubregApi
 #from .exceptions import SubregApiError, SubregApiAuthError, SubregApiRequestError, SubregApiServerError, SubregApiTimeoutError
 
