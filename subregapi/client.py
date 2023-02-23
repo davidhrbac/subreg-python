@@ -1,5 +1,5 @@
 import requests
-from .models import Contact, ContactItem, ContactList, ContactId, ErrorResponse, ResellerList
+from .models import DomainList, Contact, ContactItem, ContactList, ContactId, ErrorResponse, ResellerList
 
 class SubregApi:
     def __init__(self, api_key, base_url = "https://api.subreg.cz/"):
@@ -39,64 +39,77 @@ class SubregApi:
 
     def get_domains(self):
         """https://api.demoreg.net/#/Domains/get_domains"""
-        return self._get_request(self.domains_path)['domains']
+        r =  self._get_request(self.domains_path)
+        if r.status_code == 200:
+            return DomainList.from_dict(r.json())
 
     def check_domain(self, domain, for_user = None):
         """https://api.demoreg.net/#/Domains/get_domains__domain__check"""
         params = {"for_user": for_user} if for_user else {}
-        if domain:
-            return self._get_request(f"{self.domains_path}/{domain}/check", params=params)
+        #if domain:
+        r = self._get_request(f"{self.domains_path}/{domain}/check", params=params)
+        if r.status_code == 200:
+            return DomainCheckInfo.from_dict(r.json())
+        else:
+            return None
 
     def multicheck_domains(self, domains = None):
         """https://api.demoreg.net/#/Domains/post_domains_multicheck"""
         if len(domains)>0:
             data = {}
             data["domains"] = domains
-            return self._post_request(f"{self.domains_path}/multicheck", data)["results"]
+            r = self._post_request(f"{self.domains_path}/multicheck", data)
+            if r.status_code == 200:
+                return DomainMultiCheckList.from_dict(r.json())
+            else:
+                return None
 
     def get_domain(self, domain=None):
         """https://api.demoreg.net/#/Domains/get_domains__domain_"""
-        if domain:
-            return self._get_request(f"{self.domains_path}/{domain}")
+        r = self._get_request(f"{self.domains_path}/{domain}")
+        if r.status_code == 200:
+            return DomainInfo.from_dict(r.json())
+        else:
+            return None
 
     def register_domain(self, domain=None):
         """https://api.demoreg.net/#/Domains/post_domains__domain_"""
         if domain:
             return self._get_request(f"{self.domains_path}/{domain}")
 
-    def set_domains(self):
-        """https://api.demoreg.net/#/Domains/put_domains__domain_"""
-        return self._get_request(self.domains_path)
+    #def set_domains(self):
+    #    """https://api.demoreg.net/#/Domains/put_domains__domain_"""
+    #    return self._get_request(self.domains_path)
 
-    def delete_domain(self, domain=None):
-        """https://api.demoreg.net/#/Domains/delete_domains__domain_"""
-        if domain:
-            return self._get_request(f"{self.domains_path}/{domain}")
+    #def delete_domain(self, domain=None):
+    #    """https://api.demoreg.net/#/Domains/delete_domains__domain_"""
+    #    if domain:
+    #        return self._get_request(f"{self.domains_path}/{domain}")
 
-    def renew_domain(self, domain=None):
-        """https://api.demoreg.net/#/domains/post_domains__domain__renew"""
-        if domain:
-            return self._get_request(f"{self.domains_path}/{domain}")
+    #def renew_domain(self, domain=None):
+    #    """https://api.demoreg.net/#/domains/post_domains__domain__renew"""
+    #    if domain:
+    #        return self._get_request(f"{self.domains_path}/{domain}")
 
-    def restore_domain(self, domain=None):
-        """https://api.demoreg.net/#/Domains/post_domains__domain__restore"""
-        if domain:
-            return self._get_request(f"{self.domains_path}/{domain}")
+    #def restore_domain(self, domain=None):
+    #    """https://api.demoreg.net/#/Domains/post_domains__domain__restore"""
+    #    if domain:
+    #        return self._get_request(f"{self.domains_path}/{domain}")
 
-    def trasfer_domain(self, domain=None):
-        """https://api.demoreg.net/#/Domains/post_domains__domain__transfer"""
-        if domain:
-            return self._get_request(f"{self.domains_path}/{domain}")
+    #def trasfer_domain(self, domain=None):
+    #    """https://api.demoreg.net/#/Domains/post_domains__domain__transfer"""
+    #    if domain:
+    #        return self._get_request(f"{self.domains_path}/{domain}")
 
-    def account_transfer_domain(self, domain=None):
-        """https://api.demoreg.net/#/Domains/post_domains__domain__account_transfer"""
-        if domain:
-            return self._get_request(f"{self.domains_path}/{domain}")
+    #def account_transfer_domain(self, domain=None):
+    #    """https://api.demoreg.net/#/Domains/post_domains__domain__account_transfer"""
+    #    if domain:
+    #        return self._get_request(f"{self.domains_path}/{domain}")
 
-    def autorenew_domain(self, domain=None):
-        """https://api.demoreg.net/#/Domains/put_domains__domain__autorenew"""
-        if domain:
-            return self._get_request(f"{self.domains_path}/{domain}")
+    #def autorenew_domain(self, domain=None):
+    #    """https://api.demoreg.net/#/Domains/put_domains__domain__autorenew"""
+    #    if domain:
+    #        return self._get_request(f"{self.domains_path}/{domain}")
 
     @property
     def dns_path(self):

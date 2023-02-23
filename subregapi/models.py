@@ -1,5 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from datetime import date
 from dataclass_wizard import JSONWizard
 
 # General dataclasses BEGIN
@@ -16,6 +17,155 @@ class ErrorResponse(JSONWizard):
 # General dataclasses END
 
 # Domains API dataclasses BEGIN
+@dataclass
+class DomainList(JSONWizard):
+    """
+    DomainList dataclass
+
+    """
+    domains: list[DomainItem]
+    count: int
+
+
+@dataclass
+class DomainItem:
+    """
+    DomainItem dataclass
+
+    """
+    name: str
+    expire: date
+    autorenew: int
+
+@dataclass
+class DomainCheckInfo(JSONWizard):
+    """
+    Data dataclass
+
+    """
+    name: str
+    avail: int
+    price: Price
+    price_renew: PriceRenew
+    price_transfer: PriceTransfer
+    existing_claim_id: str
+
+@dataclass
+class Price:
+    """
+    Price dataclass
+
+    """
+    amount: float | str
+    amount_with_trustee: float | str
+    premium: int
+    currency: str
+
+@dataclass
+class PriceRenew:
+    """
+    PriceRenew dataclass
+
+    """
+    amount: float | str
+    premium: int
+    currency: str
+
+@dataclass
+class PriceTransfer:
+    """
+    PriceTransfer dataclass
+
+    """
+    amount: float | str
+    premium: int
+    currency: str
+
+@dataclass
+class DomainMultiCheckList(JSONWizard):
+    """
+    Data dataclass
+
+    """
+    results: list[DomainMultiCheckItem]
+
+@dataclass
+class DomainMultiCheckItem:
+    """
+    Result dataclass
+
+    """
+    name: str
+    avail: int
+    error: str
+
+@dataclass
+class DomainInfo(JSONWizard):
+    """
+    Data dataclass
+
+    """
+    domain: str
+    contacts: Contacts
+    hosts: list[str]
+    delegated_hosts: list[str]
+    registrant: Registrant
+    ex_date: date
+    cr_date: date
+    tr_date: date
+    up_date: date
+    authid: str
+    status: list[str]
+    autorenew: int
+    premium: int
+    price: float | str
+
+@dataclass
+class Contacts:
+    """
+    Contacts dataclass
+
+    """
+    admin: list[Admin]
+    tech: list[Tech]
+    billing: list[Billing]
+
+@dataclass
+class Admin:
+    """
+    Admin dataclass
+
+    """
+    regid: str
+    id: str
+
+@dataclass
+class Tech:
+    """
+    Tech dataclass
+
+    """
+    regid: str
+    id: str
+
+@dataclass
+class Billing:
+    """
+    Billing dataclass
+
+    """
+    regid: str
+    id: str
+
+@dataclass
+class Registrant:
+    """
+    Registrant dataclass
+
+    """
+    regid: str
+    id: str
+
 # Domains API dataclasses END
 
 # Contacts API dataclasses BEGIN
