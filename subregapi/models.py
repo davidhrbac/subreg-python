@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 from dataclass_wizard import JSONWizard
 
 # General dataclasses BEGIN
@@ -243,6 +243,58 @@ class Hostname(JSONWizard):
 # Hosts API dataclasses END
 
 # Orders API dataclasses BEGIN
+@dataclass
+class OrderList(JSONWizard):
+    """
+    Data dataclass
+
+    """
+    orders: list[OrderItem]
+
+
+@dataclass
+class OrderItem:
+    """
+    Order dataclass
+
+    """
+    id: int | str
+    domain: str
+    type: str
+    status: str
+    errorcode: int | str
+    #lastupdate: datetime
+    lastupdate: str
+    message: str
+    paid: int | str
+    amount: float | str
+
+@dataclass
+class OrderInfo(JSONWizard):
+    """
+    Data dataclass
+
+    """
+    order: Order
+
+
+@dataclass
+class Order:
+    """
+    Order dataclass
+
+    """
+    id: int | str
+    domain: str
+    type: str
+    status: str
+    errorcode: int | str
+    #lastupdate: datetime
+    lastupdate: str
+    message: str
+    paid: int | str
+    amount: float | str
+
 # Orders API dataclasses END
 
 # DNS API dataclasses BEGIN

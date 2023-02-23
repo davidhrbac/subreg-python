@@ -1,5 +1,6 @@
 import requests
-from .models import DomainList, Contact, ContactItem, ContactList, ContactId, ErrorResponse, ResellerList
+from .models import DomainList, Contact, ContactItem, ContactList, ContactId, ErrorResponse, ResellerList, OrderList, Order, OrderInfo
+import json
 
 class SubregApi:
     def __init__(self, api_key, base_url = "https://api.subreg.cz/"):
@@ -21,10 +22,12 @@ class SubregApi:
         #print(response.json['error'])
         return response
 
-    def _post_request(self, path, data):
+    def _post_request(self, path, data=None):
         headers = {"Accept": "application/json", "Authorization": f"Bearer {self.api_key}"}
         url = self.base_url + path
         response = requests.post(url, data=data, headers=headers)
+        #print(response)
+        #print(response.json['error'])
         return response
 
     def _put_request(self, path, data):
@@ -110,6 +113,25 @@ class SubregApi:
     #    """https://api.demoreg.net/#/Domains/put_domains__domain__autorenew"""
     #    if domain:
     #        return self._get_request(f"{self.domains_path}/{domain}")
+
+    @property
+    def orders_path(self):
+        return "orders"
+
+    def get_orders(self):
+        r =  self._get_request(self.orders_path)
+        if r.status_code == 200:
+            return OrderList.from_dict(r.json())
+
+    def get_order(self, order=None):
+        r = self._get_request(f"{self.orders_path}/{order}")
+        if r.status_code == 200:
+            return OrderInfo.from_dict(r.json())
+
+    def cancel_order(self, order=None):
+        r = self._post_request(f"{self.orders_path}/{order}/cancel", data = json.dumps({}))
+        success = r.status_code == 200
+        return success
 
     @property
     def dns_path(self):
