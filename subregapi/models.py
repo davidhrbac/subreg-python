@@ -1,5 +1,5 @@
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date, datetime
 from dataclass_wizard import JSONWizard
 
@@ -40,7 +40,7 @@ class DomainItem:
 @dataclass
 class DomainCheckInfo(JSONWizard):
     """
-    Data dataclass
+    DomainCheckInfo dataclass
 
     """
     name: str
@@ -84,7 +84,7 @@ class PriceTransfer:
 @dataclass
 class DomainMultiCheckList(JSONWizard):
     """
-    Data dataclass
+    DomainMultiCheckList dataclass
 
     """
     results: list[DomainMultiCheckItem]
@@ -102,7 +102,7 @@ class DomainMultiCheckItem:
 @dataclass
 class DomainInfo(JSONWizard):
     """
-    Data dataclass
+    DomainInfo dataclass
 
     """
     domain: str
@@ -246,7 +246,7 @@ class Hostname(JSONWizard):
 @dataclass
 class OrderList(JSONWizard):
     """
-    Data dataclass
+    OrderList dataclass
 
     """
     orders: list[OrderItem]
@@ -272,7 +272,7 @@ class OrderItem:
 @dataclass
 class OrderInfo(JSONWizard):
     """
-    Data dataclass
+    OrderInfo dataclass
 
     """
     order: Order
@@ -298,6 +298,61 @@ class Order:
 # Orders API dataclasses END
 
 # DNS API dataclasses BEGIN
+@dataclass
+class DnsRecordList(JSONWizard):
+    """
+    DnsRecordList dataclass
+
+    """
+    domain: str
+    records: list[DnsRecord]
+
+
+@dataclass
+class DnsRecord:
+    """
+    Record dataclass
+
+    """
+    id: int
+    name: str
+    type: str
+    content: str
+    prio: int
+    ttl: int
+
+@dataclass
+class DnsRedirects(JSONWizard):
+    """
+    DnsRedirects dataclass
+
+    """
+    web: str
+    email: str
+
+
+@dataclass
+class DnsAnalyze(JSONWizard):
+    """
+    DnsAnalyze dataclass
+
+    """
+    in_zone: int
+    dnssec: int
+    dns: list[Dns]
+
+@dataclass
+class Dns:
+    """
+    Dn dataclass
+
+    """
+    nameserver: str
+    nslist: list[str]
+    soaid: int
+    # success is optional
+    success: str = field(default="")
+
 # DNS API dataclasses END
 
 # Resellers API dataclasses BEGIN

@@ -1,5 +1,5 @@
 import requests
-from .models import DomainList, Contact, ContactItem, ContactList, ContactId, ErrorResponse, ResellerList, OrderList, Order, OrderInfo
+from .models import *
 import json
 
 class SubregApi:
@@ -137,12 +137,28 @@ class SubregApi:
     def dns_path(self):
         return "dns"
 
+    def get_dnsrecords(self, domain=None):
+        r =  self._get_request(f"{self.dns_path}/{domain}")
+        if r.status_code == 200:
+            return DnsRecordList.from_dict(r.json())
+        else:
+            return None
+
+    def redirects_dnsrecords(self, domain=None):
+        r = self._get_request(f"{self.dns_path}/{domain}/redirects")
+        if r.status_code == 200:
+            return DnsRedirects.from_dict(r.json())
+        else:
+            return None
+
     def analyze_dnsrecords(self, domain=None, type=None):
         params = {"dnstype": type} if type else {}
-        return self._get_request(f"{self.dns_path}/{domain}/analyze", params=params)
+        r = self._get_request(f"{self.dns_path}/{domain}/analyze", params=params)
+        if r.status_code == 200:
+            return DnsAnalyze.from_dict(r.json())
+        else:
+            return None
 
-    def get_dnsrecords(self, domain=None):
-        return self._get_request(f"{self.dns_path}/{domain}")
 
     @property
     def contacts_path(self):
@@ -165,7 +181,7 @@ class SubregApi:
 
     def create_contact(self, contact):
         r = self._post_request(self.contacts_path, contact.to_json())
-        print(r.status_code)
+        #print(r.status_code)
         if r.status_code == 200:
             return ContactId.from_dict(r.json())
         else:
