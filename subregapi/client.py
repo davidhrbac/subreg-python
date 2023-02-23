@@ -1,5 +1,5 @@
 import requests
-from .models import Contact, ContactItem, ContactList, ContactId, ErrorResponse
+from .models import Contact, ContactItem, ContactList, ContactId, ErrorResponse, ResellerList
 
 class SubregApi:
     def __init__(self, api_key, base_url = "https://api.subreg.cz/"):
@@ -18,6 +18,7 @@ class SubregApi:
         headers = {"Accept": "application/json", "Authorization": f"Bearer {self.api_key}"}
         url = self.base_url + path
         response = requests.get(url, headers=headers, params=params)
+        #print(response.json['error'])
         return response
 
     def _post_request(self, path, data):
@@ -135,3 +136,18 @@ class SubregApi:
         else:
             return None
 
+    @property
+    def resellers_path(self):
+        return "resellers"
+
+    def get_resellers(self):
+        r =  self._get_request(self.resellers_path)
+        if r.status_code == 200:
+            return ResellerList.from_dict(r.json())
+
+    def get_reseller_by_hostname(self, hostname=None):
+        r = self._get_request(f"{self.resellers_path}/{hostname}")
+        if r.status_code == 200:
+            return ResellerInfo.from_dict(r.json())
+        else:
+            return None

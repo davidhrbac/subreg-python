@@ -6,7 +6,7 @@ from dataclass_wizard import JSONWizard
 @dataclass
 class ErrorResponse(JSONWizard):
     """
-    Data dataclass
+    ErrorResponse dataclass
 
     """
     error: str
@@ -22,7 +22,7 @@ class ErrorResponse(JSONWizard):
 @dataclass
 class Contact(JSONWizard):
     """
-    Data dataclass
+    Contact dataclass
 
     """
     id: str
@@ -42,7 +42,7 @@ class Contact(JSONWizard):
 @dataclass
 class ContactList(JSONWizard):
     """
-    Data dataclass
+    ContactList dataclass
 
     """
     contacts: list[ContactItem]
@@ -51,7 +51,7 @@ class ContactList(JSONWizard):
 @dataclass
 class ContactItem:
     """
-    Contact dataclass
+    ContactItem dataclass
 
     """
     name: str
@@ -72,7 +72,7 @@ class ContactItem:
 @dataclass
 class ContactId(JSONWizard):
     """
-    Data dataclass
+    ContactId dataclass
 
     """
     contactid: str
@@ -80,6 +80,16 @@ class ContactId(JSONWizard):
 # Contacts API dataclasses END
 
 # Hosts API dataclasses BEGIN
+@dataclass
+class Hostname(JSONWizard):
+    """
+    Hostname dataclass
+
+    """
+    hostname: str
+    ipv4: list[str]
+    ipv6: list[str]
+
 # Hosts API dataclasses END
 
 # Orders API dataclasses BEGIN
@@ -89,4 +99,78 @@ class ContactId(JSONWizard):
 # DNS API dataclasses END
 
 # Resellers API dataclasses BEGIN
+@dataclass
+class ResellerList(JSONWizard):
+    """
+    ResellerList dataclass
+
+    """
+    resellers: list[Reseller]
+
+
+@dataclass
+class ResellerItem:
+    """
+    ResellerItem dataclass
+
+    """
+    hostname: str
+    title: str
+    website: str
+    email: str
+    phone: str
+    postal_address: str
+    facebook: str
+    twitter: str
+    linkedin: str
+    langs: list[str]
+    default_lang: str
+    currencies: list[str]
+    default_currency: str
+    bank_accounts: list
+    paypal_account: str
+    default_pricelist: str
+    vat_rate: int
+    top_tlds: list[str]
+    default_nameservers: list[str]
+    contact_form_email: str
+    authorization_email_: str
+
+@dataclass
+class ResellerInfo(JSONWizard):
+    """
+    ResellerInfo dataclass
+
+    """
+    reseller: Reseller
+
+
+@dataclass
+class Reseller:
+    """
+    Reseller dataclass
+
+    """
+    hostname: str
+    title: str
+    website: str
+    email: str
+    phone: str
+    postal_address: str
+    facebook: str
+    twitter: str
+    linkedin: str
+    langs: list[str]
+    default_lang: str
+    currencies: list[str]
+    default_currency: str
+    bank_accounts: list
+    paypal_account: str
+    default_pricelist: str
+    vat_rate: int
+    top_tlds: list[str]
+    default_nameservers: list[str]
+    contact_form_email: str
+    authorization_email_: str
+
 # Resellers API dataclasses END
